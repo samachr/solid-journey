@@ -12,8 +12,18 @@ function initialize() {
   gameMap.currentKey = params.key.replace("s", "#") || "C";
   gameMap.currentAttemptOffsetX = 0;
   gameMap.currentAttemptOffsetY = 0;
+  gameMap.visible = gameMap.map.map(row => row.map(column => false))
+  setControls()
   drawMap();
 
+}
+
+function setControls() {
+  getMajorScale(gameMap.currentKey).forEach((note, index) => {
+    var control = document.getElementById('btn'+index)
+    control.innerText = note;
+    control.onclick = () => tryAnswer(note);
+  })
 }
 
 document.addEventListener('keydown', function(event) {
@@ -129,9 +139,10 @@ function createMap(width, height) {
   return mapData;
 }
 
+var typeColors= ["gray", "blue", "green", "magenta", "white", "brown"]
+
 function drawMap(playerDirection) {
   var typeIcons = ["", "balance-scale", "keyboard-o", "music"];
-  var typeColors= ["gray", "blue", "green", "magenta", "white", "brown"]
   var mapDOM = document.getElementById("map");
   for (var i = 0; i < 5; i++) {
     for (var j = 0; j < 5; j++) {
@@ -141,6 +152,7 @@ function drawMap(playerDirection) {
       if (x >= 0 && y >= 0 && x < gameMap.width && y < gameMap.height) {
         mapDOM.rows[j].cells[i].innerHTML = '<i class="fa fa-'+typeIcons[gameMap.map[x][y]]+'"></i>';
         mapDOM.rows[j].cells[i].style.backgroundColor = typeColors[gameMap.map[x][y]]
+        gameMap.visible[x][y] = true;
       } else {
         mapDOM.rows[j].cells[i].style.backgroundColor = "black";
       }
@@ -152,6 +164,28 @@ function drawMap(playerDirection) {
   } else {
     mapDOM.rows[2].cells[2].innerHTML = '<i class="fa fa-user"></i>';
   }
+  drawMinimap();
+}
+
+function drawMinimap() {
+  var canvas = document.getElementById('MiniMap');
+  var ctx = canvas.getContext('2d');
+  var blockSize = canvas.height / gameMap.height
+
+  for (var i = 0; i < gameMap.width; i++) {
+    for (var j = 0; j < gameMap.height; j++) {
+      if (gameMap.visible[i][j]) {
+        ctx.fillStyle = typeColors[gameMap.map[i][j]];
+      } else {
+        ctx.fillStyle = "black";
+      }
+      ctx.fillRect(blockSize * i, blockSize * j, blockSize, blockSize);
+    }
+  }
+
+  ctx.fillStyle = "yellow"
+  ctx.fillRect(blockSize * gameMap.playerX, blockSize * gameMap.playerY, blockSize, blockSize);
+
 }
 
 function move(x, y, directionName) {
@@ -193,10 +227,10 @@ function tryAnswer(letter) {
   if (gameMap.currentAnswerAttempt && gameMap.currentAnswerAttempt.length == 1 && letter == "b" || letter == "#") {
     gameMap.currentAnswerAttempt += letter;
   } else {
-    gameMap.currentAnswerAttempt = letter.toUpperCase()
+    gameMap.currentAnswerAttempt = letter
   }
 
-  if (gameMap.currentAnswerAttempt == gameMap.currentPitch) {
+  if (gameMap.currentAnswerAttempt.toUpperCase() == gameMap.currentPitch.toUpperCase()) {
     gameMap.map[gameMap.playerX + gameMap.currentAttemptOffsetX][gameMap.playerY + gameMap.currentAttemptOffsetY] = 0;
     gameMap.currentAnswerAttempt = null;
     gameMap.playerX += gameMap.currentAttemptOffsetX
@@ -269,7 +303,7 @@ function updateQuery(type) {
       gameMap.currentAttemptOffsetX = 0;
       gameMap.currentAttemptOffsetY = 0;
       drawMap();
-      location.replace("finish.html?")
+      window.location='finish.html'+window.location.search;
       break;
   }
 }
