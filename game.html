@@ -1,17 +1,31 @@
 <html>
   <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>solid-journey</title>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
     <script src="./render.js"> </script>
     <style type="text/css">
+      html, body {
+        height: 100%;
+        background-color: #1e1e1e;
+        border: 0;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
       #map {
         border: 1px solid black;
-        width: 200px;
-        height: 200px;
+        width: 300px;
+        height: 300px;
         border-collapse: collapse;
-        margin: auto;
         margin-bottom: 20px;
+        margin-top: 20px;
       }
       #map > tr, td {
         border: 1px solid black;
@@ -27,9 +41,19 @@
         width:100%;
         text-align: center;
       }
+      .prompt {
+        flex-shrink: 0;
+        flex-grow: 0;
+        height: 100px;
+        width: 160px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+      }
     </style>
   </head>
   <body onload="initialize()">
+    <canvas id="MiniMap" width="300" height="300"></canvas>
     <table id="map">
       <tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
       <tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
@@ -37,10 +61,21 @@
       <tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
       <tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
     </table>
-    <canvas id="Piano" width="141" height="100"></canvas>
-    <img id="Staff" src="./assets/bass-1-As.png" alt="" />
-    <div id="scaleDegree"> Number!</div>
-    <div id="info"> Empty </div>
+    <div class="prompt">
+      <canvas id="Piano" width="141" height="100"></canvas>
+      <img id="Staff" src="./assets/bass-1-As.png" alt="" />
+      <div id="scaleDegree"> Number!</div>
+      <div id="info"></div>
+    </div>
+    <div class="controls">
+      <button id="btn0">C</button>
+      <button id="btn1">D</button>
+      <button id="btn2">E</button>
+      <button id="btn3">F</button>
+      <button id="btn4">G</button>
+      <button id="btn5">A</button>
+      <button id="btn6">B</button>
+    </div>
     <!-- <div id="start"> You have reached a new beginning </div> -->
   </body>
 </html>
